@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Cadastro{% endblock %}
+
+{% block conteudo %}
+<div class="caixa caixa-estreita">
+    <h1>Criar conta</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for campo in form %}
+            <div class="campo">
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+                {{ campo }}
+                {% if campo.help_text %}<p class="ajuda">{{ campo.help_text|safe }}</p>{% endif %}
+                {% for erro in campo.errors %}
+                    <p class="erro">{{ erro }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="botao">Cadastrar</button>
+    </form>
+
+    <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+</div>
+{% endblock %}

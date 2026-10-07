@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}Achados e Perdidos{% endblock %} - UTFPR</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="topo">
+        <a class="logo" href="{% url 'home' %}">Achados e Perdidos</a>
+        <nav aria-label="Menu principal">
+            {% if user.is_authenticated %}
+                <span class="usuario">
+                    Olá, {{ user.first_name|default:user.username }}
+                    {% if user.is_staff %}<strong>(Admin)</strong>{% endif %}
+                </span>
+                <form method="post" action="{% url 'logout' %}" class="form-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="botao botao-claro">Sair</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Entrar</a>
+                <a href="{% url 'cadastro' %}">Cadastrar</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main id="conteudo" class="conteudo">
+        {% if messages %}
+            <div class="mensagens" role="status">
+                {% for mensagem in messages %}
+                    <p class="mensagem {{ mensagem.tags }}">{{ mensagem }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer class="rodape">
+        <p>Achados e Perdidos UTFPR</p>
+    </footer>
+</body>
+</html>
