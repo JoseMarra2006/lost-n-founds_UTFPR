@@ -1,8 +1,9 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 class CadastroForm(UserCreationForm):
-    first_name = form.CharField(label='Nome', max_length=50)
+    first_name = forms.CharField(label='Nome', max_length=50)
     email = forms.EmailField(label='E-mail')
 
     class Meta:
