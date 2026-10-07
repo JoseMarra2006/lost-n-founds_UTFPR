@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Comentario, HistoricoStatus, Item, Reivindicacao
+
+admin.site.register(Item)
+admin.site.register(Comentario)
+admin.site.register(Reivindicacao)
+admin.site.register(HistoricoStatus)
