@@ -1,9 +1,69 @@
 {% extends 'base.html' %}
 
-{%block conteudo %}
-
-<div  class="cabecalho-pagina">
+{% block conteudo %}
+<div class="cabecalho-pagina">
     <h1>Achados e Perdidos</h1>
+    {% if user.is_authenticated %}
+        <a class="botao" href="{% url 'novo_item' %}">Novo Registro</a>
+    {% else %}
+        <a class="botao" href="{% url 'login' %}">Entrar para registrar</a>
+    {% endif %}
 </div>
-<p>Ainda não há itens cadastrados.</p>
+
+<form method="get" class="filtros">
+    <div class="campo">
+        <label for="categoria">Categoria</label>
+        <select name="categoria" id="categoria">
+            <option value="">Todas</option>
+            {% for valor, nome in categorias %}
+                <option value="{{ valor }}" {% if valor == categoria_atual %}selected{% endif %}>{{ nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="campo">
+        <label for="status">Status</label>
+        <select name="status" id="status">
+            <option value="">Todos</option>
+            {% for valor, nome in status_lista %}
+                <option value="{{ valor }}" {% if valor == status_atual %}selected{% endif %}>{{ nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="campo">
+        <button type="submit" class="botao">Filtrar</button>
+        <a class="botao botao-claro" href="{% url 'home' %}">Limpar</a>
+    </div>
+</form>
+
+{% if pagina %}
+    <ul class="lista-itens">
+        {% for item in pagina %}
+            <li class="cartao">
+                <img src="{{ item.foto.url }}" alt="Foto de {{ item.titulo }}">
+                <div>
+                    <h2><a href="{% url 'detalhe_item' item.id %}">{{ item.titulo }}</a></h2>
+                    <p>
+                        {{ item.get_categoria_display }}
+                        <span class="etiqueta status-{{ item.status }}">{{ item.get_status_display }}</span>
+                    </p>
+                    <p>{{ item.criado_em|date:"d/m/Y H:i" }}</p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p>
+        {% if pagina.has_previous %}
+            <a href="?page={{ pagina.previous_page_number }}&categoria={{ categoria_atual }}&status={{ status_atual }}">Anterior</a>
+        {% endif %}
+        Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}
+        {% if pagina.has_next %}
+            <a href="?page={{ pagina.next_page_number }}&categoria={{ categoria_atual }}&status={{ status_atual }}">Próxima</a>
+        {% endif %}
+    </p>
+{% else %}
+    <p>Ainda não há itens cadastrados.</p>
+{% endif %}
 {% endblock %}
