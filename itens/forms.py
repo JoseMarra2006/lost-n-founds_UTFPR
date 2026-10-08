@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import STATUS, Item
+from .models import STATUS, Comentario, Item, Reivindicacao
 
 TIPOS_FORM = [('', 'Selecione...'), ('perdido', 'Perdido'), ('encontrado', 'Encontrado')]
 CATEGORIAS_FORM = [('', 'Selecione...')] + [
@@ -69,3 +69,28 @@ class EditarItemForm(forms.ModelForm):
 class StatusForm(forms.Form):
     status = forms.ChoiceField(choices=STATUS, label='Novo status')
     observacao = forms.CharField(max_length=200, required=False, label='Observação')
+
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ['texto']
+
+
+class ReivindicacaoForm(forms.ModelForm):
+    imagem = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png'}),
+    )
+
+    class Meta:
+        model = Reivindicacao
+        fields = ['prova', 'imagem']
+
+    def clean_imagem(self):
+        imagem = self.cleaned_data.get('imagem')
+        if imagem and hasattr(imagem, 'content_type'):
+            if imagem.content_type not in ('image/jpeg', 'image/png'):
+                raise forms.ValidationError('Envie uma imagem JPG ou PNG.')
+            if imagem.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('A imagem deve ter no máximo 5 MB.')
+        return imagem

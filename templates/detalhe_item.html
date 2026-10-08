@@ -34,6 +34,14 @@
         <a class="botao" href="{% url 'editar_item' item.id %}">Editar</a>
         <a class="botao botao-perigo" href="{% url 'excluir_item' item.id %}">Excluir</a>
     {% endif %}
+
+    {% if pode_reivindicar %}
+        {% if user.is_authenticated %}
+            <button type="button" class="botao botao-sucesso" id="abrir-reivindicacao">Reivindicar</button>
+        {% else %}
+            <a class="botao botao-sucesso" href="{% url 'login' %}?next={{ request.path }}">Entrar para reivindicar</a>
+        {% endif %}
+    {% endif %}
 </div>
 
 {% if user.is_staff %}
@@ -51,6 +59,24 @@
     </form>
 </div>
 {% endif %}
+
+<div class="caixa" style="margin-top: 15px;">
+    <h2>Comentários</h2>
+    {% for comentario in comentarios %}
+        <div class="comentario">
+            <p><strong>{{ comentario.autor.first_name|default:comentario.autor.username }}</strong> em {{ comentario.criado_em|date:"d/m/Y H:i" }}</p>
+            <p>{{ comentario.texto|linebreaksbr }}</p>
+            {% if user.is_staff %}
+                <form method="post" action="{% url 'excluir_comentario' comentario.id %}" class="form-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="botao botao-perigo">Excluir comentário</button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Ainda não há comentários.</p>
+    {% endfor %}
+</div>
 
 <div class="caixa" style="margin-top: 15px;">
     <h2>Histórico de status</h2>
@@ -79,4 +105,63 @@
         </table>
     </div>
 </div>
+
+{% if user.is_authenticated %}
+    <button type="button" class="botao botao-flutuante" id="abrir-comentario">Adicionar Comentário</button>
+{% else %}
+    <a class="botao botao-flutuante" href="{% url 'login' %}?next={{ request.path }}">Entrar para comentar</a>
+{% endif %}
+
+{% if user.is_authenticated %}
+<dialog id="dialog-comentario" aria-labelledby="titulo-comentario">
+    <h2 id="titulo-comentario">Adicionar Comentário</h2>
+    <form method="post" action="{% url 'comentar' item.id %}">
+        {% csrf_token %}
+        <div class="campo">
+            <label for="{{ form_comentario.texto.id_for_label }}">Comentário</label>
+            {{ form_comentario.texto }}
+        </div>
+        <button type="submit" class="botao">Salvar</button>
+        <button type="button" class="botao botao-claro" id="cancelar-comentario">Cancelar</button>
+    </form>
+</dialog>
+
+{% if pode_reivindicar %}
+<dialog id="dialog-reivindicacao" aria-labelledby="titulo-reivindicacao">
+    <h2 id="titulo-reivindicacao">Reivindicar item</h2>
+    <form method="post" action="{% url 'reivindicar' item.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="campo">
+            <label for="{{ form_reivindicacao.prova.id_for_label }}">Prova de que o item é seu</label>
+            {{ form_reivindicacao.prova }}
+        </div>
+        <div class="campo">
+            <label for="{{ form_reivindicacao.imagem.id_for_label }}">Imagem adicional (opcional)</label>
+            {{ form_reivindicacao.imagem }}
+        </div>
+        <button type="submit" class="botao">Enviar</button>
+        <button type="button" class="botao botao-claro" id="cancelar-reivindicacao">Cancelar</button>
+    </form>
+</dialog>
+{% endif %}
+
+<script>
+    function ligarDialog(idAbrir, idDialog, idCancelar) {
+        const abrir = document.getElementById(idAbrir);
+        const dialog = document.getElementById(idDialog);
+        const cancelar = document.getElementById(idCancelar);
+        if (!abrir || !dialog) {
+            return;
+        }
+        abrir.addEventListener('click', function () {
+            dialog.showModal();
+        });
+        cancelar.addEventListener('click', function () {
+            dialog.close();
+        });
+    }
+    ligarDialog('abrir-comentario', 'dialog-comentario', 'cancelar-comentario');
+    ligarDialog('abrir-reivindicacao', 'dialog-reivindicacao', 'cancelar-reivindicacao');
+</script>
+{% endif %}
 {% endblock %}

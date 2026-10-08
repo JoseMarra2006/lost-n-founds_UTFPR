@@ -18,6 +18,9 @@
                     Olá, {{ user.first_name|default:user.username }}
                     {% if user.is_staff %}<strong>(Admin)</strong>{% endif %}
                 </span>
+                {% if user.is_staff %}
+                    <a href="{% url 'lista_reivindicacoes' %}">Reivindicações</a>
+                {% endif %}
                 <form method="post" action="{% url 'logout' %}" class="form-inline">
                     {% csrf_token %}
                     <button type="submit" class="botao botao-claro">Sair</button>

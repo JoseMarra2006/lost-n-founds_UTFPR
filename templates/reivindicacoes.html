@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Reivindicações{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+    <h1>Reivindicações pendentes</h1>
+</div>
+
+{% for r in pendentes %}
+<div class="caixa" style="margin-bottom: 15px;">
+    <h2><a href="{% url 'detalhe_item' r.item.id %}">{{ r.item.titulo }}</a></h2>
+    <p><strong>Solicitante:</strong> {{ r.autor.first_name|default:r.autor.username }} em {{ r.criado_em|date:"d/m/Y H:i" }}</p>
+    <p><strong>Prova:</strong> {{ r.prova|linebreaksbr }}</p>
+    {% if r.imagem %}
+        <p><a href="{{ r.imagem.url }}" target="_blank" rel="noopener">Ver imagem enviada</a></p>
+    {% endif %}
+    <form method="post" action="{% url 'decidir_reivindicacao' r.id %}" class="form-inline">
+        {% csrf_token %}
+        <button type="submit" name="acao" value="aprovar" class="botao botao-sucesso">Aprovar</button>
+        <button type="submit" name="acao" value="recusar" class="botao botao-perigo">Recusar</button>
+    </form>
+</div>
+{% empty %}
+<p>Não há reivindicações pendentes.</p>
+{% endfor %}
+{% endblock %}
