@@ -28,7 +28,7 @@
                     <p class="ajuda" id="aviso-local"></p>
                 {% endif %}
                 {% if campo.name == 'foto' %}
-                    <p class="ajuda">JPG ou PNG, até 5 MB.</p>
+                    <p class="ajuda" id="aviso-local" aria-live="polite"></p>
                 {% endif %}
                 {% for erro in campo.errors %}
                     <p class="erro">{{ erro }}</p>
