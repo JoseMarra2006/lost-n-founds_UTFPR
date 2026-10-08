@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Editar item{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+    <a class="botao botao-claro" href="{% url 'detalhe_item' item.id %}">Voltar</a>
+    <h1>Editar item</h1>
+    <button type="submit" form="form-editar" class="botao">Salvar</button>
+</div>
+
+<div class="caixa">
+    <form method="post" enctype="multipart/form-data" id="form-editar">
+        {% csrf_token %}
+        {% for campo in form %}
+            <div class="campo">
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+                {{ campo }}
+                {% for erro in campo.errors %}
+                    <p class="erro">{{ erro }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}

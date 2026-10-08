@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Excluir item{% endblock %}
+
+{% block conteudo %}
+<div class="caixa caixa-estreita">
+    <h1>Excluir item</h1>
+    <p>Tem certeza que deseja excluir "{{ item.titulo }}"? Esta ação não pode ser desfeita.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="botao botao-perigo">Sim, excluir</button>
+        <a class="botao botao-claro" href="{% url 'detalhe_item' item.id %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

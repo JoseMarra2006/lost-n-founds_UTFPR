@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Item
+from .models import STATUS, Item
 
 TIPOS_FORM = [('', 'Selecione...'), ('perdido', 'Perdido'), ('encontrado', 'Encontrado')]
 CATEGORIAS_FORM = [('', 'Selecione...')] + [
@@ -38,3 +38,34 @@ class ItemForm(forms.ModelForm):
         if foto.size > 5 * 1024 * 1024:
             raise forms.ValidationError('A foto deve ter no máximo 5 MB.')
         return foto
+
+class EditarItemForm(forms.ModelForm):
+    categoria = forms.ChoiceField(choices=CATEGORIAS_FORM, label='Categoria')
+    foto = forms.ImageField(required=False, label='Trocar foto (opcional)',
+                            widget=forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png'}))
+
+    class Meta:
+        model = Item
+        fields = ['titulo', 'descricao', 'categoria', 'local', 'foto']
+        labels = {
+            'titulo': 'Título',
+            'descricao': 'Descrição',
+            'local': 'Local aproximado',
+        }
+        widgets = {
+            'descricao': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def clean_foto(self):
+        foto = self.cleaned_data.get('foto')
+        if foto and hasattr(foto, 'content_type'):
+            if foto.content_type not in ('image/jpeg', 'image/png'):
+                raise forms.ValidationError('Envie uma imagem JPG ou PNG.')
+            if foto.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('A foto deve ter no máximo 5 MB.')
+        return foto
+
+
+class StatusForm(forms.Form):
+    status = forms.ChoiceField(choices=STATUS, label='Novo status')
+    observacao = forms.CharField(max_length=200, required=False, label='Observação')
