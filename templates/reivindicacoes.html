@@ -8,7 +8,7 @@
 </div>
 
 {% for r in pendentes %}
-<div class="caixa" style="margin-bottom: 15px;">
+<div class="caixa espaco-base">
     <h2><a href="{% url 'detalhe_item' r.item.id %}">{{ r.item.titulo }}</a></h2>
     <p><strong>Solicitante:</strong> {{ r.autor.first_name|default:r.autor.username }} em {{ r.criado_em|date:"d/m/Y H:i" }}</p>
     <p><strong>Prova:</strong> {{ r.prova|linebreaksbr }}</p>

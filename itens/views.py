@@ -58,10 +58,15 @@ def novo_item(request):
 def detalhe_item(request, id):
     item = get_object_or_404(Item, id=id)
     pode_reivindicar = item.tipo == 'encontrado' and item.status in ('encontrado', 'verificacao')
+    rotulos = dict(STATUS)
+    historico = list(item.historico.all())
+    for registro in historico:
+        registro.anterior = rotulos.get(registro.status_anterior, '-')
+        registro.novo = rotulos.get(registro.status_novo, registro.status_novo)
     contexto = {
         'item': item,
         'form_status': StatusForm(initial={'status': item.status}),
-        'historico': item.historico.all(),
+        'historico': historico,
         'comentarios': item.comentarios.all(),
         'pode_reivindicar': pode_reivindicar,
         'form_comentario': ComentarioForm(),

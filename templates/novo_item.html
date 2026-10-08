@@ -25,9 +25,6 @@
                 {{ campo }}
                 {% if campo.name == 'local' %}
                     <button type="button" class="botao botao-claro" id="botao-local">Usar minha localização</button>
-                    <p class="ajuda" id="aviso-local"></p>
-                {% endif %}
-                {% if campo.name == 'foto' %}
                     <p class="ajuda" id="aviso-local" aria-live="polite"></p>
                 {% endif %}
                 {% for erro in campo.errors %}

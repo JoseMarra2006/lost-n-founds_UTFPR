@@ -17,7 +17,7 @@ Desenvolvido com **Django**, **SQLite** e templates HTML (sem SPA).
 
 ## Requisitos
 
-- Python 3.11 ou superior (desenvolvido e testado com Python 3.14)
+- Python 3.12 ou superior (desenvolvido e testado com Python 3.14)
 - Git
 - Não é necessário Docker nem banco de dados externo (usa SQLite)
 

@@ -45,7 +45,7 @@
 </div>
 
 {% if user.is_staff %}
-<div class="caixa" style="margin-top: 15px;">
+<div class="caixa espaco-topo">
     <h2>Alterar status (Admin)</h2>
     <form method="post" action="{% url 'alterar_status' item.id %}">
         {% csrf_token %}
@@ -60,7 +60,7 @@
 </div>
 {% endif %}
 
-<div class="caixa" style="margin-top: 15px;">
+<div class="caixa espaco-topo">
     <h2>Comentários</h2>
     {% for comentario in comentarios %}
         <div class="comentario">
@@ -78,7 +78,7 @@
     {% endfor %}
 </div>
 
-<div class="caixa" style="margin-top: 15px;">
+<div class="caixa espaco-topo">
     <h2>Histórico de status</h2>
     <div class="tabela-rolavel">
         <table>
@@ -95,8 +95,8 @@
                 {% for registro in historico %}
                 <tr>
                     <td>{{ registro.criado_em|date:"d/m/Y H:i" }}</td>
-                    <td>{{ registro.status_anterior|default:"-" }}</td>
-                    <td>{{ registro.status_novo }}</td>
+                    <td>{{ registro.anterior }}</td>
+                    <td>{{ registro.novo }}</td>
                     <td>{{ registro.alterado_por.first_name|default:"-" }}</td>
                     <td>{{ registro.observacao|default:"-" }}</td>
                 </tr>

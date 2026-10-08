@@ -13,7 +13,7 @@ class CadastroForm(UserCreationForm):
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('Já existe uma conta com este e-mail')
+            raise forms.ValidationError('Já existe uma conta com este e-mail.')
         return email
 
     def save(self, commit=True):
