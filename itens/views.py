@@ -1,7 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
-from .models import CATEGORIAS, STATUS, Item
+from .forms import ItemForm
+from .models import CATEGORIAS, STATUS, HistoricoStatus, Item
 
 
 def home(request):
@@ -26,3 +29,28 @@ def home(request):
         'status_atual': status,
     }
     return render(request, 'home.html', contexto)
+
+@login_required
+def novo_item(request):
+    if request.method == 'POST':
+        form = ItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.autor = request.user
+            if item.tipo == 'encontrado':
+                item.status = 'verificacao'
+            else:
+                item.status = 'perdido'
+            item.save()
+            HistoricoStatus.objects.create(
+                item=item,
+                status_anterior='',
+                status_novo=item.status,
+                alterado_por=request.user,
+                observacao='Item cadastrado',
+            )
+            messages.success(request, 'Item cadastrado com sucesso!')
+            return redirect('home')
+    else:
+        form = ItemForm()
+    return render(request, 'novo_item.html', {'form': form})

@@ -10,6 +10,6 @@ def provisoria(request, id=None):
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('novo/', provisoria, name='novo_item'),
+    path('novo/', views.novo_item, name='novo_item'),
     path('item/<int:id>/', provisoria, name='detalhe_item'),
 ]
